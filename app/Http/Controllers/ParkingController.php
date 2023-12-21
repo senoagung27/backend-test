@@ -15,21 +15,24 @@ class ParkingController extends Controller
     public function masuk(Request $request)
     {
         $request->validate([
-            'nomor_polisi' => 'required|string|max:20',
+            'nomor_polisi' => 'required|string',
         ]);
-        $nomorPolisi = $request->input('nomor_polisi');
 
-        // Cek apakah mobil sudah pernah masuk atau sudah keluar
-        $parking = Parking::where('nomor_polisi', $nomorPolisi)
+        // Cek apakah mobil sudah pernah masuk atau keluar
+        $parkir = Parking::where('nomor_polisi', $request->nomor_polisi)
             ->whereNull('waktu_keluar')
             ->first();
 
-        if (!$parking) {
-            // Mobil belum pernah masuk atau sudah keluar, generate kode unik
-            $parking = Parking::create(['nomor_polisi' => $nomorPolisi]);
+        if (!$parkir) {
+            // Mobil belum pernah masuk atau sudah keluar, generate kode unik dan catat waktu masuk
+            $parkir = Parking::create([
+                'kode_unik' => uniqid(),
+                'nomor_polisi' => $request->nomor_polisi,
+                'waktu_masuk' => now(),
+            ]);
         }
 
-        return response()->json(['kode_unik' => $parking->id]);
+        return response()->json(['kode_unik' => $parkir->kode_unik]);
     }
     public function keluar(Request $request)
     {
@@ -53,6 +56,19 @@ class ParkingController extends Controller
         ]);
 
         return response()->json(['biaya' => $biaya]);
+    }
+
+    public function laporan(Request $request)
+    {
+        $dari = $request->get('dari', date('Y-m-d'));
+        $sampai = $request->get('sampai', date('Y-m-d'));
+
+        $laporan = Parking::whereBetween('waktu_masuk', [$dari, $sampai])->get();
+
+        return response()->json([
+            'message' => 'Laporan berhasil dimuat',
+            'data' => $laporan,
+        ], 200);
     }
     public function index()
     {

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\StokFFController;
+use App\Http\Controllers\ParkingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\StokJubelioController;
@@ -104,15 +105,24 @@ Route::group([ "middleware" => ['auth:sanctum', config('jetstream.auth_session')
     /**
      * User Routes
      */
-    Route::group(['prefix' => 'posts'], function() {
-        Route::get('/', [ PostsController::class, 'index'])->name('posts.index');
-        Route::get('/create', 'PostsController@create')->name('posts.create');
-        Route::post('/create', 'PostsController@store')->name('posts.store');
-        Route::get('/{post}/show', 'PostsController@show')->name('posts.show');
-        Route::get('/{post}/edit', 'PostsController@edit')->name('posts.edit');
-        Route::patch('/{post}/update', 'PostsController@update')->name('posts.update');
-        Route::delete('/{post}/delete', 'PostsController@destroy')->name('posts.destroy');
+
+
+// Rute Admin
+Route::middleware('auth:admin')->group(function () {
+    Route::group(['prefix' => 'parkir'], function() {
+        Route::post('/parkir/masuk', [ParkingController::class, 'masuk']);
+        Route::post('/parkir/keluar', [ParkingController::class, 'keluar']);
+        Route::get('/parkir/laporan', [ParkingController::class, 'laporan']);
+        Route::get('/parkir/export-laporan', [ParkingController::class, 'exportLaporan']);
+
+        // Route::get('/create', 'PostsController@create')->name('posts.create');
+        // Route::post('/create', 'PostsController@store')->name('posts.store');
+        // Route::get('/{post}/show', 'PostsController@show')->name('posts.show');
+        // Route::get('/{post}/edit', 'PostsController@edit')->name('posts.edit');
+        // Route::patch('/{post}/update', 'PostsController@update')->name('posts.update');
+        // Route::delete('/{post}/delete', 'PostsController@destroy')->name('posts.destroy');
     });
+});
 
     Route::resource('roles', RolesController::class);
     Route::resource('permissions', PermissionsController::class);

@@ -21,10 +21,10 @@ use App\Http\Controllers\api\LoginJubelioController;
 //     Route::post('loginjubelio', 'LoginController@login');
 //     return $request->user();
 // });
-Route::post('/loginjubelio', [LoginJubelioController::class, 'login']);
-Route::post('/loginff', [LoginFFController::class, 'login']);
-Route::get('/getdata',[StokController::class, 'getData']);
-Route::get('/getstok',[StokController::class, 'getStok']);
+// Route::post('/loginjubelio', [LoginJubelioController::class, 'login']);
+// Route::post('/loginff', [LoginFFController::class, 'login']);
+// Route::get('/getdata',[StokController::class, 'getData']);
+// Route::get('/getstok',[StokController::class, 'getStok']);
 // Route::get('/getstok',[StokController::class, 'getstokff']);
 // Route::middleware('auth:api')->group(function () {
 //     Route::get('getstok',[StokController::class, 'getStock']);
